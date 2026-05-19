@@ -6,6 +6,7 @@ import Testimonials from "@/components/sections/testimonials";
 import Process from "@/components/sections/process";
 import AiFeature from "@/components/sections/ai-feature";
 import Faq from "@/components/sections/faq";
+import Includes from "@/components/sections/includes";
 import ContactForm from "@/components/sections/contact-form";
 import Footer from "@/components/sections/footer";
 
@@ -51,6 +52,7 @@ export default function Home() {
       <Process />
       <AiFeature />
       <Faq />
+      <Includes />
       <ContactForm />
       <Footer />
     </main>
