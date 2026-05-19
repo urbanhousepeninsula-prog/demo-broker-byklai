@@ -19,9 +19,20 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Carlos Mendoza · Broker Inmobiliario en Mérida",
+  title: "Carlos Mendoza · Broker Inmobiliario en Mérida, Yucatán",
   description:
-    "12 años ayudando a familias e inversionistas en la zona norte de Mérida. Residencial y lujo en Cholul, Conkal y Country Club.",
+    "12 años ayudando a familias e inversionistas en la zona norte de Mérida. Residencial y lujo en Cholul, Conkal y Country Club. Contacto directo sin intermediarios.",
+  openGraph: {
+    title: "Carlos Mendoza · Broker Inmobiliario en Mérida",
+    description:
+      "Encuentra tu propiedad ideal en la zona norte de Mérida. Atención directa y proceso claro de principio a fin.",
+    type: "website",
+    url: "https://demo.byklai.com",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
