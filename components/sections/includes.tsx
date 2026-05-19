@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { CheckCircle, XCircle, Check, X } from "lucide-react";
+import { CheckCircle, XCircle, Check, X, Zap } from "lucide-react";
 import { slideLeft, slideRight, fadeUp } from "@/lib/animations";
 import Badge from "@/components/ui/badge";
 
@@ -14,7 +14,7 @@ const incluye = [
   "Formulario estructurado de 5 bloques",
   "CRM conectado a Google Sheets",
   "Diseño responsive mobile y desktop",
-  "Integración de contacto directo a WhatsApp",
+  "Contacto directo a WhatsApp con notificación automática al broker cuando llega un lead",
   "Optimización básica de velocidad",
   "Entrega en 72 horas",
   "1 correo profesional con tu dominio (via Zoho Mail)",
@@ -175,6 +175,49 @@ export default function Includes() {
             </ul>
           </motion.div>
         </div>
+
+        {/* Upsell agente IA */}
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          style={{
+            background: "var(--color-surface)",
+            border: "1px solid var(--color-border)",
+            borderRadius: "var(--radius-md)",
+            padding: "20px 24px",
+            marginTop: "24px",
+            marginBottom: "var(--space-lg)",
+            display: "flex",
+            alignItems: "center",
+            gap: "16px",
+            flexWrap: "wrap",
+          }}
+        >
+          <Zap size={20} color="var(--color-accent)" strokeWidth={2} style={{ flexShrink: 0 }} />
+          <div style={{ flex: 1, minWidth: "200px" }}>
+            <p style={{ fontSize: "14px", fontWeight: 600, color: "var(--color-text)", margin: 0 }}>
+              ¿Quieres más automatización?
+            </p>
+            <p style={{ fontSize: "13px", color: "var(--color-muted)", margin: "2px 0 0" }}>
+              Agrega el Agente IA en WhatsApp que responde y agenda citas automáticamente.
+            </p>
+          </div>
+          <span
+            style={{
+              background: "var(--color-surface-2)",
+              border: "1px solid var(--color-border)",
+              borderRadius: "999px",
+              padding: "6px 14px",
+              fontSize: "12px",
+              color: "var(--color-accent)",
+              fontWeight: 600,
+              whiteSpace: "nowrap",
+            }}
+          >
+            desde MX$499/mes
+          </span>
+        </motion.div>
 
         {/* Nota legal */}
         <motion.p
