@@ -12,7 +12,6 @@ const incluye = [
   "Certificado SSL gratuito",
   "Landing profesional de una página",
   "Formulario estructurado de 5 bloques",
-  "CRM conectado a Google Sheets",
   "Diseño responsive mobile y desktop",
   "Contacto directo a WhatsApp con notificación automática al broker cuando llega un lead",
   "Optimización básica de velocidad",
