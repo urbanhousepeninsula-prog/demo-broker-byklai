@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { broker } from "@/lib/broker-data";
 import { fadeUp, stagger } from "@/lib/animations";
@@ -10,8 +10,59 @@ export default function ContactForm() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
-  const mensaje = encodeURIComponent("Hola Carlos, me gustaría agendar una llamada para hablar sobre propiedades.");
-  const waUrl = `https://wa.me/${broker.whatsapp}?text=${mensaje}`;
+  const [nombre, setNombre] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [interes, setInteres] = useState(broker.properties[0].id);
+  const [mensaje, setMensaje] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
+
+  const resetForm = () => {
+    setNombre("");
+    setTelefono("");
+    setInteres(broker.properties[0].id);
+    setMensaje("");
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(false);
+
+    const formData = {
+      access_key: broker.web3forms_key,
+      subject: `🏠 Nuevo lead — ${nombre}`,
+      from_name: nombre,
+      nombre,
+      telefono,
+      interes,
+      mensaje: mensaje || "Sin mensaje adicional",
+      fuente: "Landing web · Byklai",
+    };
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSuccess(true);
+        resetForm();
+        setTimeout(() => setSuccess(false), 5000);
+      } else {
+        setError(true);
+      }
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const waUrl = `https://wa.me/${broker.whatsapp}?text=${encodeURIComponent("Hola Carlos, me gustaría agendar una llamada para hablar sobre propiedades.")}`;
 
   return (
     <section
@@ -79,7 +130,7 @@ export default function ContactForm() {
           variants={stagger}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={handleSubmit}
           style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}
         >
           {/* Nombre */}
@@ -89,6 +140,8 @@ export default function ContactForm() {
               type="text"
               required
               placeholder="Tu nombre"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
               style={inputStyle}
             />
           </motion.div>
@@ -100,6 +153,8 @@ export default function ContactForm() {
               type="tel"
               required
               placeholder="+52 999 000 0000"
+              value={telefono}
+              onChange={(e) => setTelefono(e.target.value)}
               style={inputStyle}
             />
           </motion.div>
@@ -107,7 +162,11 @@ export default function ContactForm() {
           {/* Propiedad de interés */}
           <motion.div variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "var(--space-xs)" }}>
             <label style={labelStyle}>Propiedad de interés</label>
-            <select style={inputStyle}>
+            <select
+              value={interes}
+              onChange={(e) => setInteres(e.target.value)}
+              style={inputStyle}
+            >
               {broker.properties.map((p) => (
                 <option key={p.id} value={p.id}>{p.title}</option>
               ))}
@@ -117,33 +176,63 @@ export default function ContactForm() {
 
           {/* Mensaje */}
           <motion.div variants={fadeUp} style={{ display: "flex", flexDirection: "column", gap: "var(--space-xs)" }}>
-            <label style={labelStyle}>Mensaje <span style={{ color: "var(--color-subtle)" }}>(opcional)</span></label>
+            <label style={labelStyle}>
+              Mensaje <span style={{ color: "var(--color-subtle)" }}>(opcional)</span>
+            </label>
             <textarea
               rows={4}
               placeholder="Cuéntame qué buscas..."
+              value={mensaje}
+              onChange={(e) => setMensaje(e.target.value)}
               style={{ ...inputStyle, resize: "vertical" }}
             />
           </motion.div>
 
-          {/* Botón desactivado */}
-          <motion.div variants={fadeUp} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--space-sm)", marginTop: "var(--space-sm)" }}>
+          {/* Botón y feedback */}
+          <motion.div
+            variants={fadeUp}
+            style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--space-sm)", marginTop: "var(--space-sm)" }}
+          >
             <button
-              type="button"
-              disabled
+              type="submit"
+              disabled={loading}
               style={{
                 width: "100%",
                 padding: "16px",
-                background: "var(--color-accent)",
-                color: "#0a0a0a",
+                background: success ? "#166534" : error ? "#7f1d1d" : "var(--color-accent)",
+                color: success || error ? "#fff" : "#0a0a0a",
                 fontWeight: 700,
                 fontSize: "15px",
                 borderRadius: "var(--radius-md)",
                 border: "none",
-                opacity: 0.5,
-                cursor: "not-allowed",
+                cursor: loading ? "wait" : "pointer",
+                transition: "background var(--transition-normal)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
               }}
             >
-              Disponible próximamente
+              {loading && (
+                <span
+                  style={{
+                    width: "16px",
+                    height: "16px",
+                    border: "2px solid rgba(0,0,0,0.2)",
+                    borderTopColor: "#0a0a0a",
+                    borderRadius: "50%",
+                    display: "inline-block",
+                    animation: "spin 0.7s linear infinite",
+                  }}
+                />
+              )}
+              {loading
+                ? "Enviando..."
+                : success
+                ? "¡Mensaje enviado! Te contactamos pronto."
+                : error
+                ? "Hubo un error. Escríbenos por WhatsApp."
+                : "Enviar mensaje"}
             </button>
 
             <p style={{ color: "var(--color-muted)", fontSize: "14px", margin: 0 }}>
@@ -160,6 +249,10 @@ export default function ContactForm() {
           </motion.div>
         </motion.form>
       </div>
+
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+      `}</style>
     </section>
   );
 }

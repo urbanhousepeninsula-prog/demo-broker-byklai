@@ -6,6 +6,7 @@ export const broker = {
   bio: "Más de 12 años ayudando a familias e inversionistas a encontrar su lugar ideal en la zona norte de Mérida. Especialista en residencial y lujo en Cholul, Conkal y Country Club.",
   whatsapp: "+529990000000",
   email: "carlos@ejemplo.com",
+  web3forms_key: "TU_ACCESS_KEY_WEB3FORMS",
   stats: {
     years: "12",
     sold: "340+",
